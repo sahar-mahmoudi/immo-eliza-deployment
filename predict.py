@@ -1,23 +1,10 @@
-import click
 import joblib
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 import zipfile
 import os
 
-@click.command()
-@click.option("-i", "--input-dataset", help="Path to input .csv dataset", required=True)
-@click.option("-o", "--output-dataset", default="output/predictions.csv", help="Full path where to store predictions", required=True)
-@click.option("-a", "--artifacts-zip", default="models/artifacts.zip", help="Path to compressed model artifacts", required=True)
-def predict(input_dataset, output_dataset, artifacts_zip):
-    """Predicts house prices from 'input_dataset', stores it to 'output_dataset'."""
-    # Load the data
-    data = pd.read_csv(input_dataset)
-
-    # Extract compressed artifacts
-    with zipfile.ZipFile(artifacts_zip, 'r') as zip_ref:
-        zip_ref.extractall('models')
-
+def preprocess(data):
     # Load the model artifacts using joblib
     artifacts = joblib.load("models/artifacts.joblib")
 
@@ -27,7 +14,6 @@ def predict(input_dataset, output_dataset, artifacts_zip):
     cat_features = artifacts["features"]["cat_features"]
     imputer = artifacts["imputer"]
     enc = artifacts["enc"]
-    ensemble_model = artifacts["ensemble_model"]
 
     # Extract the used data
     data = data[num_features + fl_features + cat_features]
@@ -45,18 +31,17 @@ def predict(input_dataset, output_dataset, artifacts_zip):
         axis=1,
     )
 
+    return data
+
+def predict(data):
+    # Load the model artifacts using joblib
+    artifacts = joblib.load("models/artifacts.joblib")
+    ensemble_model = artifacts["ensemble_model"]
+
+    # Preprocess the data
+    processed_data = preprocess(data)
+
     # Make predictions using the ensemble model
-    predictions = ensemble_model.predict(data)
+    predictions = ensemble_model.predict(processed_data)
 
-    # Save predictions to a CSV file
-    pd.DataFrame({"predictions": predictions}).to_csv(output_dataset, index=False)
-
-    # Print success messages
-    click.echo(click.style("Predictions generated successfully!", fg="green"))
-    click.echo(f"Saved to {output_dataset}")
-    click.echo(
-        f"Nbr. observations: {data.shape[0]} | Nbr. predictions: {predictions.shape[0]}"
-    )
-
-if __name__ == "__main__":
-    predict()
+    return predictions
