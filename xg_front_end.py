@@ -120,13 +120,13 @@ with col2:
     # fetch api when button is clicked
     if st.button('Predict!'):
         try:
-            r = requests.post(url='http://0.0.0.0:8000/predict', json=inputs)
+            r = requests.post('http://localhost:8000/predict', json=inputs)
             if r.status_code == 200:
                 response_data = r.json()
                 lower_bound = response_data['price_range']['lower_bound']
                 upper_bound = response_data['price_range']['upper_bound']
-                formatted_lower_bound = "€{:,.2f}".format(lower_bound)
-                formatted_upper_bound = "€{:,.2f}".format(upper_bound)
+                formatted_lower_bound = "€{:,.0f}".format(int(lower_bound / 1000) * 1000)
+                formatted_upper_bound = "€{:,.0f}".format(int(upper_bound / 1000) * 1000)
                 st.subheader(f"Predicted price range: {formatted_lower_bound} - {formatted_upper_bound}")
             else:
                 st.error(f"Error: {r.text}")
