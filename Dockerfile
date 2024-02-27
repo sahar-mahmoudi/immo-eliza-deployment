@@ -20,4 +20,4 @@ ENV MODULE_NAME="api" \
     PORT=8000
 
 # Command to run your application using uvicorn
-CMD ["uvicorn", "--host", "0.0.0.0", "--port", "8000", "--reload", "${MODULE_NAME}:${VARIABLE_NAME}"]
+CMD ["uvicorn", "--host", "0.0.0.0", "--port", "8000", "--reload", "api:app"]
