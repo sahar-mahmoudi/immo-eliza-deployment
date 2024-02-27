@@ -120,7 +120,7 @@ with col2:
     # fetch api when button is clicked
     if st.button('Predict!'):
         try:
-            r = requests.post(url='http://127.0.0.1:8000/predict', json=inputs)
+            r = requests.post(url='http://0.0.0.0:8000/predict', json=inputs)
             if r.status_code == 200:
                 response_data = r.json()
                 lower_bound = response_data['price_range']['lower_bound']
