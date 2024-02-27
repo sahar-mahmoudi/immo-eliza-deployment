@@ -1,4 +1,5 @@
-
+app/_pycache_
+old_dockerfile
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
