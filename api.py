@@ -142,7 +142,9 @@ async def predict_for_dev(item: Item):
         prediction = model.predict(input_data)
 
         # Return the prediction with additional information for developers
-        return {"prediction": float(prediction[0]), "dev_info": "Additional information for developers"}
+        return {"prediction": float(prediction[0]),
+                "dev_info": "Additional information for developers"
+                }
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
