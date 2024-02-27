@@ -100,7 +100,7 @@ inputs = {
     "state_building": state_building,
     "primary_energy_consumption_sqm": primary_energy_consumption_sqm,
     "epc": epc,
-    "heating_type": "GAS",
+    "heating_type": heating_type,
     "fl_double_glazing": fl_double_glazing,
     "cadastral_income": cadastral_income,
     "nbr_bedrooms": 3,  # Provide a default value for nbr_bedrooms
