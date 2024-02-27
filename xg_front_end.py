@@ -57,7 +57,7 @@ with col2:
 
     data = pd.read_csv('properties.csv')
 
-    st.title("Real Estate Price Predictor") 
+    st.title("Real Estate Price Predictor")
 
     # taking user inputs
     display = uniques_formatted['subproperty_type']
@@ -67,7 +67,7 @@ with col2:
     region = st.selectbox('Select the region', ['Flanders', 'Brussels-Capital', 'Wallonia', 'MISSING'])
     province = st.selectbox('Select the province', data['province'].unique())
 
-    today = datetime.date.today()
+    #today = datetime.date.today()
     total_area_sqm = st.number_input('Living space area in square meter', min_value=0, max_value=data['total_area_sqm'].max().astype('int'), step=1)
     surface_land_sqm = st.number_input('Total surface area in square meter', min_value=0, max_value=data['surface_land_sqm'].max().astype('int'), step=1)
     nbr_frontages = st.number_input('Number of frontages', min_value=0, max_value=data['nbr_frontages'].max().astype('int'), step=1)

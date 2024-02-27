@@ -85,9 +85,9 @@ tags_metadata = [
 # Assign tags to the entire app
 app.openapi_tags = tags_metadata  
 
-@app.get("/")
-async def root():
-    return {"message": "API for predicting real estate prices in Belgium based on input features"}
+# @app.get("/")
+# async def root():
+#     return {"message": "API for predicting real estate prices in Belgium based on input features"}
 
 @app.post("/predict", tags=["predict"], response_description="Predicted real estate price range")
 async def predict(item: Item):
