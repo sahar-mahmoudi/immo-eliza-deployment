@@ -1,0 +1,5 @@
+property_type,subproperty_type,region,province,locality,construction_year,total_area_sqm,surface_land_sqm,nbr_frontages,nbr_bedrooms,equipped_kitchen,fl_furnished,fl_open_fire,fl_terrace,terrace_sqm,fl_garden,garden_sqm,fl_swimming_pool,fl_floodzone,state_building,primary_energy_consumption_sqm,epc,heating_type,fl_double_glazing,cadastral_income
+APARTMENT,APARTMENT,Brussels-Capital,Brussels,Brussels,1963.0,100.0,,2.0,2.0,INSTALLED,0,0,1,5.0,0,0.0,0,0,MISSING,231.0,C,GAS,1,922.0
+HOUSE,HOUSE,Flanders,East Flanders,Gent,,,680.0,,2.0,MISSING,0,0,0,0.0,0,0.0,0,0,MISSING,221.0,C,MISSING,1,406.0
+APARTMENT,APARTMENT,Brussels-Capital,Brussels,Brussels,,142.0,,2.0,3.0,INSTALLED,0,0,1,,0,0.0,0,1,AS_NEW,,MISSING,GAS,0,
+HOUSE,HOUSE,Flanders,Antwerp,Turnhout,2024.0,187.0,505.0,,3.0,MISSING,0,0,0,0.0,0,0.0,0,1,MISSING,99.0,A,MISSING,0,
