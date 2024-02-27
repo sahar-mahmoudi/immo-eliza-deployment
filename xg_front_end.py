@@ -5,6 +5,17 @@ from pydantic import BaseModel  # Add this import
 import pandas as pd
 import datetime
 
+st.set_page_config(layout="wide", page_title="Real Estate Price Predictor")
+
+hide_default_format = """
+       <style>
+       #MainMenu {visibility: hidden; }
+       footer {visibility: hidden;}
+       </style>
+       """
+st.markdown(hide_default_format, unsafe_allow_html=True)
+
+
 class Item(BaseModel):
     subproperty_type: str
     region: str
@@ -32,7 +43,7 @@ class Item(BaseModel):
 
 data = pd.read_csv('properties.csv')
 
-st.title("Price predictor") 
+st.title("Real Estate Price Predictor") 
 
 # taking user inputs
 subproperty_type = st.selectbox('Select the type of property', data['subproperty_type'].unique())
@@ -51,27 +62,27 @@ total_area_sqm = st.number_input('Living space area in square meter', min_value=
 surface_land_sqm = st.number_input('Total surface area in square meter', min_value=0, max_value=data['surface_land_sqm'].max().astype('int'), step=1)
 nbr_frontages = st.number_input('Number of frontages', min_value=0, max_value=data['nbr_frontages'].max().astype('int'), step=1)
 equipped_kitchen = st.selectbox('Select the most appropriate description of the kitchen equipment', data['equipped_kitchen'].unique())
-fl_furnished = st.radio("Is the apartment furnished?", ["No", "Yes"])
-fl_open_fire = st.radio("Is there an open fire?", ["No", "Yes"])
-fl_terrace = st.radio("Is there a terrace?", ["No", "Yes"])
+fl_furnished = st.radio("Is the apartment furnished?", ["No", "Yes"], horizontal=True)
+fl_open_fire = st.radio("Is there an open fire?", ["No", "Yes"], horizontal=True)
+fl_terrace = st.radio("Is there a terrace?", ["No", "Yes"], horizontal=True)
 if fl_terrace == "Yes":
     terrace_sqm = st.number_input('Terrace surface area', min_value=0, max_value=data['terrace_sqm'].max().astype('int'), step=1)
 else:
     terrace_sqm = 0
 
-fl_garden = st.radio("Is there a garden?", ["No", "Yes"], key='fl_garden')
+fl_garden = st.radio("Is there a garden?", ["No", "Yes"], key='fl_garden', horizontal=True)
 if fl_garden == "Yes":
     garden_sqm = st.number_input('Garden surface area', min_value=0, max_value=data['garden_sqm'].max().astype('int'), step=1)
 else:
     garden_sqm = 0
 
-fl_swimming_pool = st.radio("Is there a swimming pool?", ["No", "Yes"])
-fl_floodzone = st.radio("Is the property in a flood zone?", ["No", "Yes"])
+fl_swimming_pool = st.radio("Is there a swimming pool?", ["No", "Yes"], horizontal=True)
+fl_floodzone = st.radio("Is the property in a flood zone?", ["No", "Yes"], horizontal=True)
 state_building = st.selectbox('Select the most appropriate description of the building condition', data['state_building'].unique())
 primary_energy_consumption_sqm = st.number_input('Primary energy consumption per square meter', min_value=0.0, max_value=data['primary_energy_consumption_sqm'].max(), step=0.01)
-epc = st.radio("In which EPC class is the property?", sorted(data['epc'].unique()))
-heating_type = st.radio("Which type of heating is used?", sorted(data['heating_type'].unique()))
-fl_double_glazing = st.radio("Does the property have double glazing?", ["No", "Yes"])
+epc = st.radio("In which EPC class is the property?", sorted(data['epc'].unique()), horizontal=True)
+heating_type = st.radio("Which type of heating is used?", sorted(data['heating_type'].unique()), horizontal=True)
+fl_double_glazing = st.radio("Does the property have double glazing?", ["No", "Yes"], horizontal=True)
 cadastral_income = st.number_input('Cadastral income:', min_value=0.0, max_value=data['cadastral_income'].max(), step=0.01)
 
 fl_terrace_int = 1 if fl_terrace == "Yes" else 0
