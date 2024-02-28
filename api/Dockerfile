@@ -5,7 +5,7 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # Copy all contents into the container at /app
-COPY ./api/ .
+COPY . .
 
 # Copy requirements.txt from the root into the container at /app
 COPY ../requirements.txt .
