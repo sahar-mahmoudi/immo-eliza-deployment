@@ -4,6 +4,12 @@ FROM python:3.11-slim
 # Set the working directory to /app
 WORKDIR /app
 
+# Create a virtual environment
+RUN python -m venv venv
+
+# Activate the virtual environment
+ENV PATH="/app/venv/bin:$PATH"
+
 # Copy all contents into the container at /app
 COPY . .
 
