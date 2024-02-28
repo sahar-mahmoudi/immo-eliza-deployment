@@ -3,8 +3,8 @@ import json
 import requests
 from pydantic import BaseModel  # Add this import
 import pandas as pd
-import datetime
 from PIL import Image
+from zipcodes import get_long, get_lat, get_province, get_region
 
 
 im = Image.open('Price_Real_Estate_Logo.png')
@@ -35,59 +35,61 @@ with col1:
 # Right column for the input fields and prediction result
 with col2:
     class Item(BaseModel):
-        subproperty_type: None
-        region: str
+        nbr_frontages: float
+        nbr_bedrooms: float
+        latitude: float
+        longitude: float
+        total_area_sqm: float
+        surface_land_sqm: float
+        terrace_sqm: float
+        garden_sqm: float
+        fl_terrace: int
+        fl_garden: int
+        fl_swimming_pool: int
         province: str
-        zip_code: int
-        construction_year: int
-        total_area_sqm: int
-        surface_land_sqm: int
-        nbr_frontages: int
-        equipped_kitchen: str
-        fl_furnished: str
-        fl_open_fire: str
-        fl_terrace: str
-        terrace_sqm: int
-        fl_garden: str
-        garden_sqm: int
-        fl_swimming_pool: str
-        fl_floodzone: str
-        state_building: str
-        primary_energy_consumption_sqm: float
-        epc: str
         heating_type: str
-        fl_double_glazing: str
-        cadastral_income: float
+        state_building: str
+        property_type: str
+        epc: str
+        locality: str
+        subproperty_type: str
+        region: str
 
     data = pd.read_csv('properties.csv')
 
-    st.title("Real Estate Price Predictor") 
+    st.title("Real Estate Price Predictor")
 
     # taking user inputs
     display = uniques_formatted['subproperty_type']
-    options = uniques['subproperty_type']
     selected = st.selectbox('Select the type of property', display)
-    subproperty_type = options[display.index(selected)]
-    region = st.selectbox('Select the region', ['Flanders', 'Brussels-Capital', 'Wallonia', 'MISSING'])
-    province = st.selectbox('Select the province', data['province'].unique())
+    subproperty_type = selected.upper().replace(' ', '_')
 
     allowed_values = data['zip_code'].unique()
     zip_code = st.number_input("Enter the zip code", min_value=min(allowed_values), max_value=max(allowed_values), step=1)
-
     if zip_code not in allowed_values:
         st.error("Please enter a valid zip code")
 
-    today = datetime.date.today()
-    construction_year = st.number_input("Enter the construction year", min_value=data['construction_year'].min().astype('int'), max_value=today.year, step=1)
-    total_area_sqm = st.number_input('Living space area in square meter', min_value=0, max_value=data['total_area_sqm'].max().astype('int'), step=1)
-    surface_land_sqm = st.number_input('Total surface area in square meter', min_value=0, max_value=data['surface_land_sqm'].max().astype('int'), step=1)
-    nbr_frontages = st.number_input('Number of frontages', min_value=0, max_value=data['nbr_frontages'].max().astype('int'), step=1)
-    equipped_kitchen = st.selectbox('Select the most appropriate description of the kitchen equipment', data['equipped_kitchen'].unique())
-    fl_furnished = st.radio("Is the apartment furnished?", ["No", "Yes"], horizontal=True)
-    fl_open_fire = st.radio("Is there an open fire?", ["No", "Yes"], horizontal=True)
+    locality = st.selectbox('Select the locality', uniques['locality'])
+
+
+    #today = datetime.date.today()
+    
+    total_area_sqm = st.number_input('Living space area in square meter', min_value=1, max_value=data['total_area_sqm'].max().astype('int'), step=1)
+    
+    surface_land_sqm = st.number_input('Total surface area in square meter', min_value=1, max_value=data['surface_land_sqm'].max().astype('int'), step=1)
+    
+    nbr_frontages = st.number_input('Number of frontages', min_value=1, max_value=data['nbr_frontages'].max().astype('int'), step=1)
+    
+    nbr_bedrooms = st.number_input('Number of bedrooms',min_value=1, max_value=data['nbr_bedrooms'].max().astype('int'), step=1)
+
+    equipped_kitchen_display = uniques_formatted['equipped_kitchen']
+    equipped_kitchen_selected = st.selectbox('Select the most appropriate description of the kitchen equipment', equipped_kitchen_display)
+    equipped_kitchen = equipped_kitchen_selected.upper().replace(' ', '_')    
+
     fl_terrace = st.radio("Is there a terrace?", ["No", "Yes"], horizontal=True)
+    
     if fl_terrace == "Yes":
-        terrace_sqm = st.number_input('Terrace surface area', min_value=0, max_value=data['terrace_sqm'].max().astype('int'), step=1)
+        terrace_sqm = st.number_input('Terrace surface area', min_value=1, max_value=data['terrace_sqm'].max().astype('int'), step=1)
     else:
         terrace_sqm = 0
 
@@ -96,62 +98,66 @@ with col2:
         garden_sqm = st.number_input('Garden surface area', min_value=0, max_value=data['garden_sqm'].max().astype('int'), step=1)
     else:
         garden_sqm = 0
-
     fl_swimming_pool = st.radio("Is there a swimming pool?", ["No", "Yes"], horizontal=True)
-    fl_floodzone = st.radio("Is the property in a flood zone?", ["No", "Yes"], horizontal=True)
-    state_building = st.selectbox('Select the most appropriate description of the building condition', data['state_building'].unique())
-    primary_energy_consumption_sqm = st.number_input('Primary energy consumption per square meter', min_value=0.0, max_value=data['primary_energy_consumption_sqm'].max(), step=0.01)
-    epc = st.radio("In which EPC class is the property?", sorted(data['epc'].unique()), horizontal=True)
-    heating_type = st.radio("Which type of heating is used?", sorted(data['heating_type'].unique()), horizontal=True)
-    fl_double_glazing = st.radio("Does the property have double glazing?", ["No", "Yes"], horizontal=True)
-    cadastral_income = st.number_input('Cadastral income:', min_value=0.0, max_value=data['cadastral_income'].max(), step=0.01)
+    
+    state_building_display = uniques_formatted['state_building']
+    state_building_selected = st.selectbox('Select the most appropriate description of the building condition', state_building_display)
+    state_building = state_building_selected.upper().replace(' ', '_')    
+
+    epc_display = sorted(uniques_formatted['epc'])
+    epc_selected = st.radio("In which EPC class is the property?", epc_display, horizontal=True)
+    epc = epc_selected.upper().replace(' ', '_')    
+
+    heating_type_display = uniques_formatted['heating_type']
+    heating_type_selected = st.radio("Which type of heating is used?", heating_type_display, horizontal=True)
+    heating_type = heating_type_selected.upper().replace(' ', '_')
 
     fl_terrace_int = 1 if fl_terrace == "Yes" else 0
     fl_garden_int = 1 if fl_garden == "Yes" else 0
     fl_swimming_pool_int = 1 if fl_swimming_pool == "Yes" else 0
 
+    if subproperty_type in data[data['property_type'] == 'HOUSE']['subproperty_type'].unique():
+        property_type = 'HOUSE'
+    else:
+        property_type = 'APARTMENT'
     # convert inputs to json
     inputs = {
         "subproperty_type": subproperty_type,
-        "region": region,
-        "province": province,
-        "zip_code": zip_code,
-        "construction_year": construction_year,
+        "region": get_region(zip_code),
+        "province": get_province(zip_code),
         "total_area_sqm": total_area_sqm,
         "surface_land_sqm": surface_land_sqm,
         "nbr_frontages": nbr_frontages,
         "equipped_kitchen": equipped_kitchen,
-        "fl_furnished": fl_furnished,
-        "fl_open_fire": fl_open_fire,
         "fl_terrace": fl_terrace_int,
         "terrace_sqm": terrace_sqm,
         "fl_garden": fl_garden_int,
         "garden_sqm": garden_sqm,
         "fl_swimming_pool": fl_swimming_pool_int,
-        "fl_floodzone": fl_floodzone,
         "state_building": state_building,
-        "primary_energy_consumption_sqm": primary_energy_consumption_sqm,
         "epc": epc,
         "heating_type": heating_type,
-        "fl_double_glazing": fl_double_glazing,
-        "cadastral_income": cadastral_income,
-        "nbr_bedrooms": 3,  # Provide a default value for nbr_bedrooms
-        "latitude": 50.8503,  # Provide a default value for latitude
-        "longitude": 4.3517,  # Provide a default value for longitude
+        "nbr_bedrooms": nbr_bedrooms,
+        "latitude": get_lat(zip_code),  
+        "longitude": get_long(zip_code),  
         "property_type": "APARTMENT",  # Provide a default value for property_type
-        "locality": "Brussels",  # Provide a default value for locality
+        "locality": locality,  # Provide a default value for locality
     }
-
+    for key, value in inputs.items():
+        if value == 'NOT_AVAILABLE':
+            inputs[key] = 'MISSING'
     # fetch api when button is clicked
     if st.button('Predict!'):
         try:
-            r = requests.post(url='http://127.0.0.1:8000/predict', json=inputs)
+            print("Inputs: ")
+            print(inputs)
+            r = requests.post('https://immo-eliza-deployment-4.onrender.com/predict', json=inputs)
             if r.status_code == 200:
                 response_data = r.json()
-                lower_bound = response_data['price_range']['lower_bound']
-                upper_bound = response_data['price_range']['upper_bound']
-                formatted_lower_bound = "€{:,.2f}".format(lower_bound)
-                formatted_upper_bound = "€{:,.2f}".format(upper_bound)
+                lower_bound = response_data['price_range']['lower_bound'].replace(',', '')
+                upper_bound = response_data['price_range']['upper_bound'].replace(',', '')
+                formatted_lower_bound = "€{:,.0f}".format(round(int(lower_bound) / 1000) * 1000)
+                formatted_upper_bound = "€{:,.0f}".format(round(int(upper_bound) / 1000) * 1000)
                 st.subheader(f"Predicted price range: {formatted_lower_bound} - {formatted_upper_bound}")
             else:
                 st.error(f"Error: {r.text}")
