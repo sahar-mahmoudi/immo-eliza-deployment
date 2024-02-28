@@ -17,7 +17,7 @@ This repository contains the codebase for a real estate prediction system develo
 
 Clone the repository to your local machine:
 ```bash
-git clone https://github.com/your_username/real-estate-prediction.git
+git clone https://github.com/sahar-mahmoudi/real-estate-prediction.git
 ```
 
 Navigate to the project directory:
