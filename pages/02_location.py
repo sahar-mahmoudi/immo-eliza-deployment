@@ -22,6 +22,9 @@ with open('uniques.json', 'r') as f:
 with open('uniques_formatted.json','r') as f2:
     unique_properties_formatted = json.load(f2)  
 
+with open('localities.json','r') as f3:
+    localities2 = json.load(f3) 
+
 # Hide default Streamlit format for cleaner UI
 hide_default_format = """
        <style>
@@ -45,15 +48,17 @@ with right_column:
     selected_subproperty_type = st.selectbox('Select the type of property', display_subproperty_types)
     st.session_state.subproperty_type = selected_subproperty_type.upper().replace(' ', '_')
 
-    # Select zip code
-    zip_codes = unique_properties['zip_codes']
-    selected_zip_code = st.selectbox("Enter the zip code", sorted(zip_codes))
-    st.session_state.zip_code = selected_zip_code
-
     # Select locality
     localities = sorted(unique_properties['locality'])
     selected_locality = st.selectbox('Select the locality', localities)
     st.session_state.locality = selected_locality
+
+    # Select zip code
+    zip_codes = localities2[selected_locality]
+    selected_zip_code = st.selectbox("Enter the zip code", sorted(zip_codes))
+    st.session_state.zip_code = selected_zip_code
+
+    
 
     # Determine property type based on subproperty type
     if st.session_state.subproperty_type in unique_properties['house_subtypes']:
