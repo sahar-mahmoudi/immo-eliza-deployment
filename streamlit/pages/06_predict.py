@@ -135,11 +135,7 @@ inputs = {
     "equipped_kitchen": equipped_kitchen,
     "state_building": state_building,
     "epc": epc,
-    "heating_type": heating_type,
-    "latitude": get_lat(zip_code),  
-    "longitude": get_long(zip_code),  
-    
-     
+    "heating_type": heating_type,    
 }
 
 # Replace 'NOT_AVAILABLE' with 'MISSING'
@@ -147,12 +143,33 @@ for key, value in inputs.items():
     if value == 'NOT_AVAILABLE':
         inputs[key] = 'MISSING'
 
-# df = pd.DataFrame(inputs, index=['Value'])
-# df = df.transpose()
+df = pd.DataFrame(inputs, index=['Value'])
 
-# st.table(df)
+df = df.transpose()
+df.set_index(df.iloc[:, 0])
+for i in df.index:
+    df.index = df.index.str.replace('fl_', '')
+    df.index = df.index.str.replace('_', ' ')
+    df.index = df.index.str.replace('sqm', 'm^2')
+    df.index = df.index.str.capitalize()
+
+indexes_to_process = ['Property type', 'Subproperty type', 'Equipped kitchen', 'State building', 'Heating type']
+
+for index in indexes_to_process:
+    if index in df.index:
+        column_values = df.loc[index]
+        column_values = column_values.replace(1, 'Yes')
+        column_values = column_values.replace(0, 'No')
+        column_values = column_values.str.replace('_', ' ')
+        column_values = column_values.str.capitalize()
+        df.loc[index] = column_values
+
+# Display the DataFrame
+st.dataframe(df)
 
 
+inputs["latitude"] = get_lat(zip_code)
+inputs["longitude"] = get_long(zip_code)
 
 # fetch API when button is clicked
 if st.button('Predict!'):
