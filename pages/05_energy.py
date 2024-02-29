@@ -52,6 +52,6 @@ with right_column:
     st.session_state.heating_type = heating_type
 
 # Button to see the prediction result
-see_result_button = st.button("See my result!")
+see_result_button = st.button("Next")
 if see_result_button:
     switch_page("predict")

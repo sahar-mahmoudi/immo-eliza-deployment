@@ -25,19 +25,7 @@ hide_default_format = """
        """
 st.markdown(hide_default_format, unsafe_allow_html=True)
 
-# Set the background image
-background_image = """
-<style>
-[data-testid="stAppViewContainer"] > .main {
-    background-image: url("https://cdn.discordapp.com/attachments/1211692140036489246/1212707946555768832/homepage.png?ex=65f2d149&is=65e05c49&hm=916b806fc3513a19fa3227063c6685ce06953947c15d11833f7b545391c28a54&");
-    background-size: 100vw 100vh;  # This sets the size to cover 100% of the viewport width and height
-    background-position: center;  
-    background-repeat: no-repeat;
-}
-</style>
-"""
 
-#st.markdown(background_image, unsafe_allow_html=True)
 
 
 # Sidebar header
@@ -135,11 +123,7 @@ inputs = {
     "equipped_kitchen": equipped_kitchen,
     "state_building": state_building,
     "epc": epc,
-    "heating_type": heating_type,
-    "latitude": get_lat(zip_code),  
-    "longitude": get_long(zip_code),  
-    
-     
+    "heating_type": heating_type,    
 }
 
 # Replace 'NOT_AVAILABLE' with 'MISSING'
@@ -148,12 +132,32 @@ for key, value in inputs.items():
         inputs[key] = 'MISSING'
 
 df = pd.DataFrame(inputs, index=['Value'])
-df.set_index()
-df = df.transpose()
-for i in df[df.iloc(0)]:
-    i.str.replace('fl_','')
-st.table(df)
 
+df = df.transpose()
+df.set_index(df.iloc[:, 0])
+for i in df.index:
+    df.index = df.index.str.replace('fl_', '')
+    df.index = df.index.str.replace('_', ' ')
+    df.index = df.index.str.replace('sqm', 'm^2')
+    df.index = df.index.str.capitalize()
+
+indexes_to_process = ['Property type', 'Subproperty type', 'Equipped kitchen', 'State building', 'Heating type']
+
+for index in indexes_to_process:
+    if index in df.index:
+        column_values = df.loc[index]
+        column_values = column_values.replace(1, 'Yes')
+        column_values = column_values.replace(0, 'No')
+        column_values = column_values.str.replace('_', ' ')
+        column_values = column_values.str.capitalize()
+        df.loc[index] = column_values
+
+# Display the DataFrame
+st.dataframe(df)
+
+
+inputs["latitude"] = get_lat(zip_code)
+inputs["longitude"] = get_long(zip_code)
 
 
 # fetch API when button is clicked
