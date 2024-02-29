@@ -1,132 +1,167 @@
 import streamlit as st
+import json
+import requests
 import pandas as pd
-from predict import predict
 import datetime
+from PIL import Image
 
-# Function to predict price
-def predict_price(input_df):
-    try:
-        prediction = predict(input_df)
-        return prediction[0]
-    except Exception as e:
-        st.error(f"An error occurred: {str(e)}")
-        return None
+im = Image.open('streamlit/images/Price_Real_Estate_Logo.png')
 
-# Title
-st.title('House Price Prediction')
+st.set_page_config(layout="wide", page_title="Real Estate Price Predictor", page_icon=im)
 
-data = pd.read_csv("data/properties.csv")
+with open('streamlit/uniques.json', 'r') as f:
+    uniques = json.load(f)
 
-# Input form
-st.header('Input Property Details')
+with open('streamlit/uniques_formatted.json', 'r') as f2:
+    uniques_formatted = json.load(f2)
 
-# Property Type
-property_type = st.selectbox('Property Type', data['property_type'].unique())
+hide_default_format = """
+       <style>
+       #MainMenu {visibility: hidden; }
+       footer {visibility: hidden;}
+       </style>
+       """
+st.markdown(hide_default_format, unsafe_allow_html=True)
 
-# Subproperty Type
-subproperty_type_options = data[data['property_type']==property_type]['subproperty_type'].unique()
-subproperty_type = st.selectbox('Select the type of property', subproperty_type_options)
+# Define the layout in two columns
+col1, col2 = st.columns([1, 2])  # Adjust the column widths as needed
 
-# Region
-region = st.selectbox('Select the region', data['region'].unique())
+# Left column for the image
+with col1:
+    st.image(im)
 
-# Province
-provinces_options = data[data['region'] == region]['province'].unique()
-province = st.selectbox('Select the province', provinces_options)
+# Right column for the input fields and prediction result
+with col2:
+    data = pd.read_csv('streamlit/properties.csv')
 
-# Locality
-localities_options = data[(data['region'] == region) & (data['province'] == province)]['locality'].unique()
-locality = st.selectbox('Select the Locality', localities_options)
+    st.title("Real Estate Price Predictor")
 
-# Postal Code
-zip_code_options = data[(data['region'] == region) & (data['province'] == province) & (data['locality'] == locality)]['zip_code'].unique()
-zip_code = st.selectbox('Select the Postal Code', zip_code_options)
+    # Page 1: Choose Location
+    if st.session_state.page == 1 or 'page' not in st.session_state:
+        st.header('Choose Location')
 
- # Define columns for better layout
-col1, col2 = st.columns(2)
+        # Region
+        region = st.selectbox('Select the region', data['region'].unique())
 
-# Number of Frontages
-nbr_frontages = col1.slider('Number of Frontages', min_value=0, max_value=10, value=0)
+        # Province
+        provinces_options = data[data['region'] == region]['province'].unique()
+        province = st.selectbox('Select the province', provinces_options)
 
-# Construction Year
-current_year = datetime.datetime.now().year
-construction_year = col1.number_input('Construction Year', min_value=0, max_value=current_year, value=0)
+        # Locality
+        localities_options = data[(data['region'] == region) & (data['province'] == province)]['locality'].unique()
+        locality = st.selectbox('Select the Locality', localities_options)
 
-# Total Area
-total_area_sqm = col1.slider('Total Area (sqm)', min_value=0, max_value=500, value=0)
+        st.write('---')
+        st.write('Go to next page:')
+        if st.button('Next'):
+            st.session_state.page = 2
 
-# Surface Land
-surface_land_sqm = col1.slider('Surface Land (sqm)', min_value=0, max_value=500, value=0)
+    # Page 2: Enter Property Details
+    elif st.session_state.page == 2:
+        st.header('Enter Property Details')
 
-# Number of Bedrooms
-nbr_bedrooms = col1.slider('Number of Bedrooms', min_value=0, max_value=10, value=0)
+        # Define columns for better layout
+        col1, col2 = st.columns(2)
 
-# Terrace
-fl_terrace_present = col2.radio('Is there a Terrace?', ('Yes', 'No'))
-if fl_terrace_present == 'Yes':
-    terrace_sqm = col2.slider('Terrace Area (sqm)', min_value=0, max_value=100, value=0)
-else:
-    terrace_sqm = 0
+        # Number of Frontages
+        nbr_frontages = col1.slider('Number of Frontages', min_value=0, max_value=10, value=0)
 
-# Garden
-garden_present = col2.radio('Is there a Garden?', ('Yes', 'No'))
-if garden_present == 'Yes':
-    garden_sqm = col2.slider('Garden Area (sqm)', min_value=0, max_value=500, value=0)
-else:
-    garden_sqm = 0
+        # Construction Year
+        current_year = datetime.datetime.now().year
+        construction_year = col1.number_input('Construction Year', min_value=0, max_value=current_year, value=0)
 
-# Furnished
-fl_furnished_present = col2.radio('Is the property Furnished?', ('Yes', 'No'))
-if fl_furnished_present == 'Yes':
-    fl_furnished = 1
-else:
-    fl_furnished = 0
+        # Total Area
+        total_area_sqm = col1.slider('Total Area (sqm)', min_value=0, max_value=500, value=0)
 
-# Equipped Kitchen
-equipped_kitchen = col2.radio('Equipped Kitchen', ('Yes', 'No'))
-if equipped_kitchen == 'Yes':
-    kitchen_type_options = data[data['equipped_kitchen'] == 'Yes']['equipped_kitchen'].unique()
-else:
-    kitchen_type = None
+        # Surface Land
+        surface_land_sqm = col1.slider('Surface Land (sqm)', min_value=0, max_value=500, value=0)
 
-# State of Building
-state_building = st.selectbox('Building State', ['New', 'Good', 'To Renovate', 'To Restore'])
+        # Number of Bedrooms
+        nbr_bedrooms = col1.slider('Number of Bedrooms', min_value=0, max_value=10, value=0)
 
-# Primary Energy Consumption
-primary_energy_consumption_sqm = col2.slider('Primary Energy Consumption (sqm)', min_value=0, max_value=500, value=0)
+        # Terrace
+        fl_terrace_present = col2.radio('Is there a Terrace?', ('Yes', 'No'))
+        if fl_terrace_present == 'Yes':
+            terrace_sqm = col2.slider('Terrace Area (sqm)', min_value=0, max_value=100, value=0)
+        else:
+            terrace_sqm = 0
 
-# Open Fire
-fl_open_fire = st.radio('Has Open Fire', ('Yes', 'No'))
+        # Garden
+        garden_present = col2.radio('Is there a Garden?', ('Yes', 'No'))
+        if garden_present == 'Yes':
+            garden_sqm = col2.slider('Garden Area (sqm)', min_value=0, max_value=500, value=0)
+        else:
+            garden_sqm = 0
 
-# Swimming Pool
-fl_swimming_pool = st.radio('Has Swimming Pool', ('Yes', 'No'))
+        st.write('---')
+        st.write('Go to next page:')
+        if st.button('Next'):
+            st.session_state.page = 3
 
-# Flood Zone
-fl_floodzone = st.radio('Is in Flood Zone', ('Yes', 'No'))
+    # Page 3: Enter Additional Details
+    elif st.session_state.page == 3:
+        st.header('Enter Additional Details')
 
-# Double Glazing
-fl_double_glazing = st.radio('Has Double Glazing', ('Yes', 'No'))
+        # State of Building
+        state_building = st.selectbox('Building State', ['New', 'Good', 'To Renovate', 'To Restore'])
 
-# Energy Performance Certificate
-epc = st.selectbox('Energy Performance Certificate', ['A', 'B', 'C', 'D', 'E', 'F', 'G'])
+        # Primary Energy Consumption
+        primary_energy_consumption_sqm = st.slider('Primary Energy Consumption (sqm)', min_value=0, max_value=500, value=0)
 
-# Heating Type
-heating_type = st.selectbox('Heating Type', ['Gas', 'Fuel Oil', 'Electricity', 'Wood', 'Other'])
+        # Open Fire
+        fl_open_fire = st.radio('Has Open Fire', ('Yes', 'No'))
 
-# Predict button
-if st.button('Predict Price'):
-    # Ensure construction year is not beyond the current year
-    if construction_year > current_year:
-        st.error("Please enter a valid construction year.")
-    else:
+        # Swimming Pool
+        fl_swimming_pool = st.radio('Has Swimming Pool', ('Yes', 'No'))
+
+        # Flood Zone
+        fl_floodzone = st.radio('Is in Flood Zone', ('Yes', 'No'))
+
+        # Double Glazing
+        fl_double_glazing = st.radio('Has Double Glazing', ('Yes', 'No'))
+
+        # Energy Performance Certificate
+        epc = st.selectbox('Energy Performance Certificate', ['A', 'B', 'C', 'D', 'E', 'F', 'G'])
+
+        # Heating Type
+        heating_type = st.selectbox('Heating Type', ['Gas', 'Fuel Oil', 'Electricity', 'Wood', 'Other'])
+
+        st.write('---')
+        st.write('Go to next page:')
+        if st.button('Predict'):
+            st.session_state.page = 4
+
+    # Page 4: Review and Predict
+    elif st.session_state.page == 4:
+        st.header('Review and Predict')
+
+        # Display selected inputs for review
+        st.subheader('Selected Location:')
+        st.write('Region:', region)
+        st.write('Province:', province)
+        st.write('Locality:', locality)
+
+        st.subheader('Property Details:')
+        st.write('Number of Frontages:', nbr_frontages)
+        st.write('Construction Year:', construction_year)
+        st.write('Total Area (sqm):', total_area_sqm)
+        st.write('Surface Land (sqm):', surface_land_sqm)
+        st.write('Number of Bedrooms:', nbr_bedrooms)
+        st.write('Terrace Area (sqm):', terrace_sqm)
+        st.write('Garden Area (sqm):', garden_sqm)
+
+        st.subheader('Additional Details:')
+        st.write('Building State:', state_building)
+        st.write('Primary Energy Consumption (sqm):', primary_energy_consumption_sqm)
+        st.write('Has Open Fire:', fl_open_fire)
+        st.write('Has Swimming Pool:', fl_swimming_pool)
+        st.write('Is in Flood Zone:', fl_floodzone)
+        st.write('Has Double Glazing:', fl_double_glazing)
+        st.write('Energy Performance Certificate:', epc)
+        st.write('Heating Type:', heating_type)
+
         # Prepare input data
         input_data = {
-            'property_type': property_type,
-            'subproperty_type': subproperty_type,
-            'region': region,
-            'province': province,
-            'locality': locality,
-            'zip_code': zip_code,
             'nbr_frontages': nbr_frontages,
             'construction_year': construction_year,
             'total_area_sqm': total_area_sqm,
@@ -136,9 +171,6 @@ if st.button('Predict Price'):
             'terrace_sqm': terrace_sqm,
             'fl_garden': 1 if garden_present == 'Yes' else 0,
             'garden_sqm': garden_sqm,
-            'fl_furnished': fl_furnished,
-            'equipped_kitchen': equipped_kitchen,
-            'kitchen_type': kitchen_type,
             'state_building': state_building,
             'primary_energy_consumption_sqm': primary_energy_consumption_sqm,
             'fl_open_fire': 1 if fl_open_fire == 'Yes' else 0,
@@ -148,11 +180,17 @@ if st.button('Predict Price'):
             'epc': epc,
             'heating_type': heating_type
         }
-        input_df = pd.DataFrame([input_data])
 
-        # Make prediction
-        prediction = predict_price(input_df)
-
-        # Display prediction
-        if prediction is not None:
-            st.success(f'Predicted Price: {prediction:,.2f} EUR')
+        # fetch api when button is clicked
+        if st.button('Predict!'):
+            try:
+                r = requests.post('http://localhost:8000/predict', json=input_data)
+                if r.status_code == 200:
+                    response_data = r.json()
+                    lower_bound = response_data['price_range']['lower_bound']
+                    upper_bound = response_data['price_range']['upper_bound']
+                    st.subheader(f"Predicted price range: {lower_bound} - {upper_bound}")
+                else:
+                    st.error(f"Error: {r.text}")
+            except Exception as e:
+                st.error(f"Error: {str(e)}")
