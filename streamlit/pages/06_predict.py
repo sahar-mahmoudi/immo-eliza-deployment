@@ -23,7 +23,7 @@ hide_default_format = """
        footer {visibility: hidden;}
        </style>
        """
-st.markdown(hide_default_format, unsafe_allow_html=True)
+#st.markdown(hide_default_format, unsafe_allow_html=True)
 
 # Set the background image
 background_image = """
@@ -44,7 +44,7 @@ st.markdown(background_image, unsafe_allow_html=True)
 st.sidebar.header("Prediction time!")
 
 # Main title
-st.title("Prediction time!")
+#st.title("Prediction time!")
 
 # Load unique property data from JSON files
 with open('streamlit/uniques.json', 'r') as f:
@@ -143,52 +143,68 @@ for key, value in inputs.items():
     if value == 'NOT_AVAILABLE':
         inputs[key] = 'MISSING'
 
+left_column, middle_column, right_column = st.columns([4, 4, 1])
+
 df = pd.DataFrame(inputs, index=['Value'])
 
 df = df.transpose()
 df.set_index(df.iloc[:, 0])
-for i in df.index:
-    df.index = df.index.str.replace('fl_', '')
-    df.index = df.index.str.replace('_', ' ')
-    df.index = df.index.str.replace('sqm', 'm^2')
-    df.index = df.index.str.capitalize()
+# Divide DataFrame into two DataFrames of 8 rows each
+df1 = df.iloc[:8]
+df2 = df.iloc[8:]
 
-indexes_to_process = ['Property type', 'Subproperty type', 'Equipped kitchen', 'State building', 'Heating type']
+# Process the DataFrames the same way
+for df in [df1, df2]:
+    df.columns = df.columns.str.replace('fl_', '')
+    df.columns = df.columns.str.replace('_', ' ')
+    df.columns = df.columns.str.replace('sqm', 'm^2')
+    df.columns = df.columns.str.capitalize()
 
-for index in indexes_to_process:
-    if index in df.index:
-        column_values = df.loc[index]
-        column_values = column_values.replace(1, 'Yes')
-        column_values = column_values.replace(0, 'No')
-        column_values = column_values.str.replace('_', ' ')
-        column_values = column_values.str.capitalize()
-        df.loc[index] = column_values
+    indexes_to_process = ['Property type', 'Subproperty type', 'Equipped kitchen', 'State building', 'Heating type']
 
-# Display the DataFrame
-st.dataframe(df)
+    for index in indexes_to_process:
+        if index in df.index:
+            column_values = df.loc[index]
+            column_values = column_values.replace(1, 'Yes')
+            column_values = column_values.replace(0, 'No')
+            column_values = column_values.str.replace('_', ' ')
+            column_values = column_values.str.capitalize()
+            df.loc[index] = column_values
+
+# Display the DataFrames
+with left_column:
+    st.table(df1)
+    
+
+with middle_column:
+    st.table(df2)
 
 
-inputs["latitude"] = get_lat(zip_code)
-inputs["longitude"] = get_long(zip_code)
+   
 
-# fetch API when button is clicked
-if st.button('Predict!'):
-    with st.spinner('Wait for it...'):
-        try:
-            r = requests.post('https://immoelizapredictor.onrender.com/predict', json=inputs)
-            if r.status_code == 200:
-                response_data = r.json()
-                lower_bound = response_data['price_range']['lower_bound'].replace(',', '')
-                upper_bound = response_data['price_range']['upper_bound'].replace(',', '')
-                formatted_lower_bound = "€{:,.0f}".format(round(int(lower_bound) / 1000) * 1000)
-                formatted_upper_bound = "€{:,.0f}".format(round(int(upper_bound) / 1000) * 1000)
-                st.subheader(f"Predicted price range: {formatted_lower_bound} - {formatted_upper_bound}")
-            else:
-                st.error(f"Error: {r.text}")
-        except Exception as e:
-            st.error(f"Error: {str(e)}")
+with right_column:
+    inputs["latitude"] = get_lat(zip_code)
+    inputs["longitude"] = get_long(zip_code)
 
-# Button to initiate another prediction
-want_to_contribute = st.button("Another one!")
-if want_to_contribute:
-    switch_page("location")
+    # fetch API when button is clicked
+    if st.button('Predict!'):
+        with st.spinner('Wait for it...'):
+            try:
+                r = requests.post('https://immoelizapredictor.onrender.com/predict', json=inputs)
+                if r.status_code == 200:
+                    response_data = r.json()
+                    lower_bound = response_data['price_range']['lower_bound'].replace(',', '')
+                    upper_bound = response_data['price_range']['upper_bound'].replace(',', '')
+                    formatted_lower_bound = "€{:,.0f}".format(round(int(lower_bound) / 1000) * 1000)
+                    formatted_upper_bound = "€{:,.0f}".format(round(int(upper_bound) / 1000) * 1000)
+                    st.subheader(f"Predicted price range: {formatted_lower_bound} - {formatted_upper_bound}")
+                else:
+                    st.error(f"Error: {r.text}")
+            except Exception as e:
+                st.error(f"Error: {str(e)}")
+
+
+    # Button to initiate another prediction
+    want_to_contribute = st.button("Another one!")
+    if want_to_contribute:
+        switch_page("location")
