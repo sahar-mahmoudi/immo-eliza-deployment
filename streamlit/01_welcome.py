@@ -35,7 +35,7 @@ background_image = """
 
 st.markdown(background_image, unsafe_allow_html=True)
 
-add_logo('streamlit\images\Price_Real_Estate_Logo_small.png', height=200)
+add_logo('streamlit/images/Price_Real_Estate_Logo_small.png', height=200)
 
 # Display header text
 st.write("# Welcome to PRICE Real Estate Predictor 👋")
