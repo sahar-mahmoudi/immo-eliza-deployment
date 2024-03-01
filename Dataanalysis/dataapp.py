@@ -6,7 +6,7 @@ import pydeck as pdk
 # Load the dataset
 @st.cache
 def load_data():
-    return pd.read_csv('properties.csv')
+    return pd.read_csv('Dataanalysis/properties.csv')
 
 # Function to analyze price distribution by a specific feature
 def analyze_price_by_feature(df, feature):
