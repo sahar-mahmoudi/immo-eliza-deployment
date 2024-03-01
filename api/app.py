@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, validator, Field
 import joblib
 import pandas as pd
 
@@ -22,50 +22,25 @@ enc = artifacts["enc"]
 model = artifacts["model"]
 
 class Item(BaseModel):
-    nbr_frontages: float
-    nbr_bedrooms: float
-    latitude: float
-    longitude: float
-    total_area_sqm: float
-    surface_land_sqm: float
-    terrace_sqm: float
-    garden_sqm: float
-    fl_terrace: int
-    fl_garden: int
-    fl_swimming_pool: int
-    province: str
-    heating_type: str
-    state_building: str
-    property_type: str
-    epc: str
-    locality: str
-    subproperty_type: str
-    region: str
-    
-    class Config:
-        schema_extra = {
-            "example": {
-                "nbr_frontages": 2.0,
-                "nbr_bedrooms": 3.0,
-                "latitude": 50.8503,
-                "longitude": 4.3517,
-                "total_area_sqm": 150.0,
-                "surface_land_sqm": 200.0,
-                "terrace_sqm": 20.0,
-                "garden_sqm": 50.0,
-                "fl_terrace": 1,
-                "fl_garden": 0,
-                "fl_swimming_pool": 1,
-                "province": "Brussels",
-                "heating_type": "GAS",
-                "state_building": "GOOD",
-                "property_type": "APARTMENT",
-                "epc": "C",
-                "locality": "Brussels",
-                "subproperty_type": "APARTMENT",
-                "region": "Brussels-Capital",
-            }
-        }
+    nbr_frontages: float = Field(..., example=2.0)
+    nbr_bedrooms: float = Field(..., example=3.0)
+    latitude: float = Field(..., example=50.8503)
+    longitude: float = Field(..., example=4.3517)
+    total_area_sqm: float = Field(..., example=150.0)
+    surface_land_sqm: float = Field(..., example=200.0)
+    terrace_sqm: float = Field(..., example=20.0)
+    garden_sqm: float = Field(..., example=50.0)
+    fl_terrace: int = Field(..., example=1)
+    fl_garden: int = Field(..., example=0)
+    fl_swimming_pool: int = Field(..., example=1)
+    province: str = Field(..., example="Brussels")
+    heating_type: str = Field(..., example="GAS")
+    state_building: str = Field(..., example="GOOD")
+    property_type: str = Field(..., example="APARTMENT")
+    epc: str = Field(..., example="C")
+    locality: str = Field(..., example="Brussels")
+    subproperty_type: str = Field(..., example="APARTMENT")
+    region: str = Field(..., example="Brussels-Capital")
 
     # @validator("province")
     # def validate_province(cls, value):
