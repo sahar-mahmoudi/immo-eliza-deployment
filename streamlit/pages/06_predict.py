@@ -1,7 +1,7 @@
 import streamlit as st
 import json
 from PIL import Image
-from zipcodes import get_lat, get_long, get_province, get_region
+from zipcodes import  get_province, get_region
 from pydantic import BaseModel
 import requests
 import pandas as pd
@@ -42,7 +42,7 @@ background_image = """
 
 st.markdown(background_image, unsafe_allow_html=True)
 
-add_logo('streamlit\images\Price_Real_Estate_Logo_small.png', height=200)
+add_logo('streamlit/images/Price_Real_Estate_Logo_small.png', height=200)
 
 
 

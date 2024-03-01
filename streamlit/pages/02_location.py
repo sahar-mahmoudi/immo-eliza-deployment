@@ -4,7 +4,7 @@ import folium
 from PIL import Image
 from streamlit_extras.switch_page_button import switch_page
 from streamlit_folium import st_folium
-from zipcodes import get_lat, get_long, get_province, get_region
+from zipcodes import get_lat, get_long
 from streamlit_extras.app_logo import add_logo
 
 import streamlit as st
@@ -56,7 +56,7 @@ background_image = """
 
 st.markdown(background_image, unsafe_allow_html=True)
 
-add_logo('streamlit\images\Price_Real_Estate_Logo_small.png', height=200)
+add_logo('streamlit/images/Price_Real_Estate_Logo_small.png', height=200)
 
 # Define the layout in two columns
 left_column, right_column = st.columns([1, 1])  # Adjust the column widths as needed

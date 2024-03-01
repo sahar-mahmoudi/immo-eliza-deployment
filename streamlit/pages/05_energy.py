@@ -46,7 +46,7 @@ background_image = """
 
 st.markdown(background_image, unsafe_allow_html=True)
 
-add_logo('streamlit\images\Price_Real_Estate_Logo_small.png', height=200)
+add_logo('streamlit/images/Price_Real_Estate_Logo_small.png', height=200)
 
 
 # Take user inputs for energy features
