@@ -185,8 +185,8 @@ with left_column:
 with right_column:
     st.table(df2)
     
-    inputs["latitude"] = get_lat(zip_code)
-    inputs["longitude"] = get_long(zip_code)
+    inputs["latitude"] = st.session_state.lat
+    inputs["longitude"] = st.session_state.lon
 
     # fetch API when button is clicked
     if st.button('Predict!'):

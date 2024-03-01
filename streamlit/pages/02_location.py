@@ -1,7 +1,15 @@
-import streamlit as st
 import json
+
+import folium
 from PIL import Image
 from streamlit_extras.switch_page_button import switch_page
+from streamlit_folium import st_folium
+from zipcodes import get_lat, get_long, get_province, get_region
+
+import streamlit as st
+
+lat, lon = "50.4564", "4.1851"
+coords = [lat, lon]
 
 # Load the image for the page icon
 page_icon_image = Image.open('streamlit/images/Price_Real_Estate_Logo.png')
@@ -57,6 +65,28 @@ with right_column:
     zip_codes = localities2[selected_locality]
     selected_zip_code = st.selectbox("Enter the zip code", sorted(zip_codes))
     st.session_state.zip_code = selected_zip_code
+    
+    if selected_zip_code:
+        lat, lon = get_lat(selected_zip_code), get_long(selected_zip_code)
+        coords = [lat, lon]
+    
+    # Create folium map using openstreetmap
+    m = folium.Map(location=coords, zoom_start=17)
+    
+    # Add LocateControl to the map
+    # folium.plugins.LocateControl().add_to(m)
+
+    # Add LatLngPopup plugin
+    folium.LatLngPopup().add_to(m)
+
+    # Call to render Folium map in Streamlit
+    osm_data = st_folium(m, width=750, height=300)
+
+    if osm_data["last_clicked"]:
+        lat, lon = osm_data["last_clicked"]["lat"], osm_data["last_clicked"]["lng"]
+    
+    st.session_state["lat"] = lat
+    st.session_state["lon"] = lon
 
     
 
