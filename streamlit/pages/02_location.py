@@ -85,8 +85,7 @@ with left_column:
 # Right column for the input fields and prediction result
 with right_column:
     
-    st.markdown('The algorithm estimates the coordinates based on the provided zip code.')
-    st.markdown('If you want to use more accurate coordinates, select the position on the map.')
+    
     # Create folium map using openstreetmap
     m = folium.Map(location=coords, zoom_start=17)
     
@@ -105,7 +104,8 @@ with right_column:
     st.session_state["lat"] = lat
     st.session_state["lon"] = lon
 
-    
+    st.markdown('The algorithm estimates the coordinates based on the provided zip code.')
+    st.markdown('If you want to use more accurate coordinates, select the position on the map.')
 
     # Determine property type based on subproperty type
     if st.session_state.subproperty_type in unique_properties['house_subtypes']:
