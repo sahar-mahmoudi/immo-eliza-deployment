@@ -7,7 +7,7 @@ page_icon_image = Image.open('streamlit/images/Price_Real_Estate_Logo.png')
 
 # Configure Streamlit page settings
 st.set_page_config(
-    page_title="Hello Streamlit",
+    page_title="Welcome",
     page_icon=page_icon_image,
 )
 
@@ -41,8 +41,17 @@ st.markdown(
     Just click the button, and the app will guide you through the process. 
     
     Happy house hunting!
-    """
+
+
+
+    <small>Enthousiastically created by Sebastiaan, Sahar, Nithyaraaj, Archana and Maarten
+    
+    [Repository](https://github.com/sahar-mahmoudi/immo-eliza-deployment/tree/main)</small>
+
+    """,
+    unsafe_allow_html=True
 )
+
 
 # Define options for navigation
 navigation_options = ['Welcome', 'Location', 'Exterior', 'Interior', 'Energy', 'Predict!']

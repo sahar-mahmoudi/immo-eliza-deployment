@@ -143,46 +143,48 @@ for key, value in inputs.items():
     if value == 'NOT_AVAILABLE':
         inputs[key] = 'MISSING'
 
-left_column, middle_column, right_column = st.columns([4, 4, 1])
+left_column, right_column = st.columns([1,1])
 
 df = pd.DataFrame(inputs, index=['Value'])
 
 df = df.transpose()
 df.set_index(df.iloc[:, 0])
+
+for i in df.index:
+    df.index = df.index.str.replace('fl_', '')
+    df.index = df.index.str.replace('_', ' ')
+    df.index = df.index.str.replace('sqm', 'm^2')
+    df.index = df.index.str.capitalize()
+
+indexes_to_process = ['Property type', 'Subproperty type', 'Equipped kitchen', 'State building', 'Heating type']
+
+for index in indexes_to_process:
+    if index in df.index:
+        column_values = df.loc[index]
+        column_values = column_values.replace(1, 'Yes')
+        column_values = column_values.replace(0, 'No')
+        column_values = column_values.str.replace('_', ' ')
+        column_values = column_values.str.capitalize()
+        df.loc[index] = column_values
+
 # Divide DataFrame into two DataFrames of 8 rows each
-df1 = df.iloc[:8]
-df2 = df.iloc[8:]
+df1 = df.iloc[:9]
+df2 = df.iloc[9:]
 
-# Process the DataFrames the same way
-for df in [df1, df2]:
-    df.columns = df.columns.str.replace('fl_', '')
-    df.columns = df.columns.str.replace('_', ' ')
-    df.columns = df.columns.str.replace('sqm', 'm^2')
-    df.columns = df.columns.str.capitalize()
 
-    indexes_to_process = ['Property type', 'Subproperty type', 'Equipped kitchen', 'State building', 'Heating type']
-
-    for index in indexes_to_process:
-        if index in df.index:
-            column_values = df.loc[index]
-            column_values = column_values.replace(1, 'Yes')
-            column_values = column_values.replace(0, 'No')
-            column_values = column_values.str.replace('_', ' ')
-            column_values = column_values.str.capitalize()
-            df.loc[index] = column_values
 
 # Display the DataFrames
 with left_column:
     st.table(df1)
     
-
-with middle_column:
-    st.table(df2)
-
-
-   
+    # Button to initiate another prediction
+    want_to_contribute = st.button("Another one!")
+    if want_to_contribute:
+        switch_page("location")
 
 with right_column:
+    st.table(df2)
+    
     inputs["latitude"] = get_lat(zip_code)
     inputs["longitude"] = get_long(zip_code)
 
@@ -204,7 +206,4 @@ with right_column:
                 st.error(f"Error: {str(e)}")
 
 
-    # Button to initiate another prediction
-    want_to_contribute = st.button("Another one!")
-    if want_to_contribute:
-        switch_page("location")
+    
