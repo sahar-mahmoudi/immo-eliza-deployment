@@ -1,6 +1,7 @@
 import streamlit as st
 from PIL import Image
 from streamlit_extras.switch_page_button import switch_page
+from streamlit_extras.app_logo import add_logo
 
 # Load the image for the page icon
 page_icon_image = Image.open('streamlit/images/Price_Real_Estate_Logo.png')
@@ -9,6 +10,7 @@ page_icon_image = Image.open('streamlit/images/Price_Real_Estate_Logo.png')
 st.set_page_config(
     page_title="Welcome",
     page_icon=page_icon_image,
+    layout='wide'
 )
 
 # Hide default Streamlit format for cleaner UI
@@ -19,6 +21,21 @@ hide_default_format = """
        </style>
        """
 st.markdown(hide_default_format, unsafe_allow_html=True)
+
+background_image = """
+<style>
+[data-testid="stAppViewContainer"] > .main {
+    background-image: url("https://media.discordapp.net/attachments/1192782231551348796/1212746688218009620/welcome_image_clean.png?ex=65f2f55e&is=65e0805e&hm=9006958d613228a7c4720ece9246a1e03b5903fa3e4beafd8e28af67625d2ac7&=&format=webp&quality=lossless&width=2022&height=1138");
+    background-size: 100vw 100vh;  # This sets the size to cover 100% of the viewport width and height
+    background-position: right;  
+    background-repeat: no-repeat;
+}
+</style>
+"""
+
+st.markdown(background_image, unsafe_allow_html=True)
+
+add_logo('streamlit\images\Price_Real_Estate_Logo_small.png', height=200)
 
 # Display header text
 st.write("# Welcome to PRICE Real Estate Predictor 👋")

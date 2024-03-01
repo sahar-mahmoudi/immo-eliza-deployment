@@ -5,6 +5,7 @@ from PIL import Image
 from streamlit_extras.switch_page_button import switch_page
 from streamlit_folium import st_folium
 from zipcodes import get_lat, get_long, get_province, get_region
+from streamlit_extras.app_logo import add_logo
 
 import streamlit as st
 
@@ -42,15 +43,26 @@ hide_default_format = """
        """
 st.markdown(hide_default_format, unsafe_allow_html=True)
 
+background_image = """
+<style>
+[data-testid="stAppViewContainer"] > .main {
+    background-image: url("https://media.discordapp.net/attachments/1192782231551348796/1212746688218009620/welcome_image_clean.png?ex=65f2f55e&is=65e0805e&hm=9006958d613228a7c4720ece9246a1e03b5903fa3e4beafd8e28af67625d2ac7&=&format=webp&quality=lossless&width=2022&height=1138");
+    background-size: 100vw 100vh;  # This sets the size to cover 100% of the viewport width and height
+    background-position: right;  
+    background-repeat: no-repeat;
+}
+</style>
+"""
+
+st.markdown(background_image, unsafe_allow_html=True)
+
+add_logo('streamlit\images\Price_Real_Estate_Logo_small.png', height=200)
+
 # Define the layout in two columns
-left_column, right_column = st.columns([1, 2])  # Adjust the column widths as needed
+left_column, right_column = st.columns([1, 1])  # Adjust the column widths as needed
 
 # Left column for the image
 with left_column:
-    st.image(page_icon_image)
-
-# Right column for the input fields and prediction result
-with right_column:
     # Select property type
     display_subproperty_types = sorted(unique_properties_formatted['subproperty_type'])
     selected_subproperty_type = st.selectbox('Select the type of property', display_subproperty_types)
@@ -69,7 +81,12 @@ with right_column:
     if selected_zip_code:
         lat, lon = get_lat(selected_zip_code), get_long(selected_zip_code)
         coords = [lat, lon]
+
+# Right column for the input fields and prediction result
+with right_column:
     
+    st.markdown('The algorithm estimates the coordinates based on the provided zip code.')
+    st.markdown('If you want to use more accurate coordinates, select the position on the map.')
     # Create folium map using openstreetmap
     m = folium.Map(location=coords, zoom_start=17)
     
@@ -80,7 +97,7 @@ with right_column:
     folium.LatLngPopup().add_to(m)
 
     # Call to render Folium map in Streamlit
-    osm_data = st_folium(m, width=750, height=300)
+    osm_data = st_folium(m, width=750, height=400)
 
     if osm_data["last_clicked"]:
         lat, lon = osm_data["last_clicked"]["lat"], osm_data["last_clicked"]["lng"]
