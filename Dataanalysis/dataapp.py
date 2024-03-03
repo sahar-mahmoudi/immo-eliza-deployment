@@ -8,7 +8,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error
 
 # Load the dataset
-@st.cache_data
+@st.cache
 def load_data():
     df = pd.read_csv('Dataanalysis/properties.csv')
     # Drop the "ID" column
