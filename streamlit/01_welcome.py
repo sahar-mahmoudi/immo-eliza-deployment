@@ -64,7 +64,8 @@ st.markdown(
     <small>Enthousiastically created by Sebastiaan, Sahar, Nithyaraaj, Archana and Maarten
     
     [Repository](https://github.com/sahar-mahmoudi/immo-eliza-deployment/tree/main)</small>                                
-    [API](https://immoelizapredictor.onrender.com/docs)</small>
+    [API](https://immoelizapredictor.onrender.com/docs)</small>                         
+    [Data Analysis](https://immoelizaanalysis.streamlit.app/)</small>
 
     """,
     unsafe_allow_html=True
