@@ -97,6 +97,11 @@ def analyze_price_distribution(df, features):
     # Sidebar options
     selected_features = st.sidebar.multiselect("Select Features", features)
     
+    # Check if no features are selected
+    if not selected_features:
+        st.warning("Please select at least one feature for analysis.")
+        return
+    
     # Filter data based on selected options
     df_filtered = df.copy()
     for feature in selected_features:
