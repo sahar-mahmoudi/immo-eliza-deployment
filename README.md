@@ -52,6 +52,7 @@ Example Request:
   "subproperty_type": "APARTMENT",
   "region": "Brussels-Capital"
 }
+```
 
 Example Response:  
 ```json  
