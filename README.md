@@ -53,7 +53,8 @@ Example Request:
   "region": "Brussels-Capital"
 }
 
-Example Response:    
+Example Response:  
+```json  
 {
   "price_range": {
     "lower_bound": 250000.0,
