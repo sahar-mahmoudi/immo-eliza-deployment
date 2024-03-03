@@ -24,7 +24,7 @@ This Streamlit web application 🚀 is designed to predict the price range of re
 
 The machine learning model is exposed through a RESTful API with the following endpoint:
 
-- **Endpoint:** `/predict`
+- **Endpoint:** [/predict](https://immoelizapredictor.onrender.com/docs) 
 - **Method:** POST
 - **Request Body:** JSON format containing property details
 - **Response:** Predicted price range in JSON format
