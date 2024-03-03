@@ -102,7 +102,7 @@ def analyze_price_distribution(df, features):
         st.warning("Please select at least one feature for analysis.")
         return
     
-    # Filter data based on selected options
+    # Filter data based on selected options and remove rows with explicitly mentioned missing values
     df_filtered = df.copy()
     for feature in selected_features:
         df_filtered = df_filtered[df_filtered[feature] != "MISSING"]
@@ -116,10 +116,15 @@ def analyze_price_distribution(df, features):
     # Display data count after applying filters
     st.write(f"Data Count after Filtering: {len(df_filtered)}")
 
+    # Check if any valid data remains after filtering
+    if df_filtered.empty:
+        st.warning("No data available after filtering. Please adjust your selection.")
+        return
+
     # Analyze price distribution based on selected options
-    if selected_features:
-        for feature in selected_features:
-            analyze_price_by_feature(df_filtered, feature)
+    for feature in selected_features:
+        analyze_price_by_feature(df_filtered, feature)
+
 
 # Function to divide features into numerical and categorical
 def divide_features(df):
