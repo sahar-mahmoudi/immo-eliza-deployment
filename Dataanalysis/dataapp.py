@@ -17,7 +17,15 @@ def load_data():
     df.columns = df.columns.str.capitalize()
     return df
 
-
+# Function to clean the data
+def clean_data(df):
+    # Drop duplicate rows
+    df = df.drop_duplicates()
+    # Fill missing values with "None"
+    df = df.fillna("None")
+    # Filter out rows where the 'Price' and 'Total_area_sqm' columns don't contain 'None'
+    df = df[(df['Price'] != 'None') & (df['Total_area_sqm'] != 'None')]
+    return df
 
 # Function to display introduction section
 def display_introduction(df):
