@@ -65,6 +65,7 @@ def display_introduction(df):
 
 # Function to analyze price distribution by a specific feature
 def analyze_price_by_feature(df, feature):
+
     st.subheader(f'Price Distribution by {feature.capitalize()}')
     
     # Filter out rows where the feature values are "MISSING"
@@ -93,7 +94,8 @@ def analyze_price_by_feature(df, feature):
 # Function to analyze price distribution
 def analyze_price_distribution(df, features):
     st.title("Price Distribution Analysis")
-    
+   # Filter out rows where the feature values are "MISSING"
+    df = df[df[feature] != "MISSING"]
     # Sidebar options
     selected_features = st.sidebar.multiselect("Select Features", features)
     
