@@ -1,11 +1,13 @@
 import streamlit as st
 import json
 from PIL import Image
-from zipcodes import get_lat, get_long, get_province, get_region
+from zipcodes import  get_province, get_region
 from pydantic import BaseModel
 import requests
 import pandas as pd
 from streamlit_extras.switch_page_button import switch_page
+from streamlit_extras.app_logo import add_logo
+
 
 # Load the image for the page icon
 page_icon_image = Image.open('streamlit/images/Price_Real_Estate_Logo.png')
@@ -14,6 +16,7 @@ page_icon_image = Image.open('streamlit/images/Price_Real_Estate_Logo.png')
 st.set_page_config(
     page_title="Hello Streamlit",
     page_icon=page_icon_image,
+    layout='wide'
 )
 
 # Hide default Streamlit format for cleaner UI
@@ -23,7 +26,7 @@ hide_default_format = """
        footer {visibility: hidden;}
        </style>
        """
-#st.markdown(hide_default_format, unsafe_allow_html=True)
+st.markdown(hide_default_format, unsafe_allow_html=True)
 
 # Set the background image
 background_image = """
@@ -39,12 +42,19 @@ background_image = """
 
 st.markdown(background_image, unsafe_allow_html=True)
 
+add_logo('streamlit/images/Price_Real_Estate_Logo_small.png', height=200)
+
+
 
 # Sidebar header
 st.sidebar.header("Prediction time!")
 
 # Main title
-#st.title("Prediction time!")
+st.title("Review and prediction")
+
+st.markdown("Review your selected values before proceeding.")
+st.markdown("When all data is correct, click on 'Predict!' to estimate a price or 'Another one!' to start a new prediction")
+
 
 # Load unique property data from JSON files
 with open('streamlit/uniques.json', 'r') as f:
@@ -156,7 +166,9 @@ for i in df.index:
     df.index = df.index.str.replace('sqm', 'm^2')
     df.index = df.index.str.capitalize()
 
-indexes_to_process = ['Property type', 'Subproperty type', 'Equipped kitchen', 'State building', 'Heating type']
+indexes_to_process = ['Property type', 'Subproperty type', 'Equipped kitchen', 
+                      'State building', 'Heating type', 'Garden','Terrace',
+                      'Swimming pool']
 
 for index in indexes_to_process:
     if index in df.index:
@@ -176,7 +188,6 @@ df2 = df.iloc[9:]
 # Display the DataFrames
 with left_column:
     st.table(df1)
-    
     # Button to initiate another prediction
     want_to_contribute = st.button("Another one!")
     if want_to_contribute:
