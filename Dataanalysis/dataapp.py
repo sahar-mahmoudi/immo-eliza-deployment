@@ -186,45 +186,6 @@ def display_kde_plot(df):
     
     st.write(explanation)
 
-# Function for Summary & Price Prediction
-def predict_prices(df):
-    st.title("Recap & Predictive Modeling")
-
-      # Summary
-    st.header("Summary of Analysis")
-    st.write("Here is a summary of the analysis performed:")
-
-    st.write("- Explored the distribution of property prices based on various features such as region, province, locality, and number of bedrooms.")
-    st.write("- Identified key factors influencing property prices, including total area, number of bedrooms, and presence of amenities such as terrace and garden.")
-    st.write("- Investigated the relationship between price and categorical features like property type, subproperty type, and state of the building.")
-    st.write("- Calculated key performance indicators (KPIs) such as count, mean, median, max, and min prices by region, province, and locality.")
-
-    # List of machine learning models for price prediction
-    st.header("Machine Learning Models for Price Prediction")
-    st.write("Below are some of the commonly used machine learning models for predicting property prices:")
-
-    st.subheader("1. Linear Regression")
-    st.write("Linear Regression is a simple and commonly used algorithm for predicting numeric values. It works by fitting a linear relationship between the independent variables and the target variable.")
-
-    st.subheader("2. Random Forest Regression")
-    st.write("Random Forest is an ensemble learning method that operates by constructing a multitude of decision trees at training time and outputs the mean prediction of the individual trees as the final prediction.")
-
-    st.subheader("3. Support Vector Regression (SVR)")
-    st.write("Support Vector Regression is an extension of Support Vector Machines (SVM) for regression tasks. It works by mapping the input features into a higher-dimensional space where a linear relationship is sought.")
-
-    st.subheader("4. XGBoost")
-    st.write("XGBoost is an efficient and scalable implementation of gradient boosting algorithms. It is highly flexible and provides state-of-the-art results on a wide range of problems.")
-
-    st.subheader("5. Lasso Regression")
-    st.write("Lasso Regression, or Least Absolute Shrinkage and Selection Operator, is a linear regression technique that performs both variable selection and regularization to improve the prediction accuracy and interpretability of the model.")
-
-    # Additional information
-    st.header("Additional Information")
-    st.write("While these are some of the commonly used models, there are many other algorithms such as Gradient Boosting, Neural Networks, and LSTMs that can also be used for price prediction tasks.")
-
-    st.write("It's essential to preprocess the data, handle missing values, encode categorical variables, and perform feature scaling before training the models to achieve better performance.")
-
-    st.write("Furthermore, model performance can be evaluated using metrics such as Mean Squared Error (MSE), Root Mean Squared Error (RMSE), and R-squared.")
 
 # Main function
 def main():
@@ -279,9 +240,6 @@ def main():
         # Display KDE plot for price distribution
          display_kde_plot(df)
 
-    elif page == 'Recap & Predictive Modeling':
-        # Summary and Price Prediction
-        predict_prices(df)
 
 if __name__ == "__main__":
     main()
