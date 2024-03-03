@@ -61,6 +61,8 @@ Example Response:
     "upper_bound": 280000.0
   }
 }
+```
+
 ## Application Structure
 
 ### Location Input (location.py) 🗺️
