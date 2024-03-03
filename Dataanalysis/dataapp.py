@@ -10,12 +10,13 @@ from sklearn.metrics import mean_squared_error
 # Load the dataset
 @st.cache_data
 def load_data():
-    df = pd.read_csv('Dataanalysis/properties.csv')
+    df = pd.read_csv('properties.csv')
     # Drop the "ID" column
     df.drop(columns=['id'], inplace=True)
     # Capitalize column names
     df.columns = df.columns.str.capitalize()
     return df
+
 
 # Function to clean the data
 def clean_data(df):
@@ -31,7 +32,7 @@ def clean_data(df):
 def display_introduction(df):
     st.title('Welcome to Data Analysis')
     st.write('This is an interactive data analysis tool where you can explore the price distribution of properties in Belgium.')
-    st.image('Dataanalysis/Belgium_properties.png', caption='Properties in Belgium', use_column_width=True)
+    st.image('Belgium_properties.png', caption='Properties in Belgium', use_column_width=True)
 
     # Additional text
     st.write("""
