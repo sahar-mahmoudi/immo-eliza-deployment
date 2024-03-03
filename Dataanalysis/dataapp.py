@@ -31,7 +31,7 @@ def clean_data(df):
 def display_introduction(df):
     st.title('Welcome to Data Analysis')
     st.write('This is an interactive data analysis tool where you can explore the price distribution of properties in Belgium.')
-    st.image('Belgium_properties.png', caption='Properties in Belgium', use_column_width=True)
+    st.image(''Dataanalysis/Belgium_properties.png', caption='Properties in Belgium', use_column_width=True)
 
     # Additional text
     st.write("""
